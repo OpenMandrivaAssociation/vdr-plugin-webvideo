@@ -17,6 +17,7 @@ Source2:	webvid.sysconfig
 BuildRoot:	%{_tmppath}/%{name}-buildroot
 BuildRequires:	vdr-devel >= 1.6.0
 BuildRequires:	libxml2-devel
+BuildRequires:	python-devel
 Requires:	vdr-abi = %vdr_abi
 Suggests:	webvid
 
