@@ -2,7 +2,7 @@
 %define plugin	webvideo
 %define name	vdr-plugin-%plugin
 %define version	0.1.5
-%define rel	1
+%define rel	2
 
 Summary:	VDR plugin: Download video files from the web
 Name:		%name
