@@ -16,7 +16,7 @@ Source1:	webvid.init
 Source2:	webvid.sysconfig
 Patch0:		webvideo-gcc4.4.patch
 BuildRoot:	%{_tmppath}/%{name}-buildroot
-BuildRequires:	vdr-devel >= 1.6.0
+BuildRequires:	vdr-devel >= 1.6.0-7
 BuildRequires:	libxml2-devel
 BuildRequires:	python-devel
 Requires:	vdr-abi = %vdr_abi
@@ -93,7 +93,7 @@ param="-c DAEMONCMD"
 %build
 python setup.py build
 cd vdr-plugin
-export VDR_PLUGIN_FLAGS="%vdr_plugin_flags $(pkg-config --cflags libxml-2.0)"
+export VDR_PLUGIN_EXTRA_FLAGS="$(pkg-config --cflags libxml-2.0)"
 %vdr_plugin_build 
 
 %install
