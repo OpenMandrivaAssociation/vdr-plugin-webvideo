@@ -1,8 +1,8 @@
 
 %define plugin	webvideo
 %define name	vdr-plugin-%plugin
-%define version	0.1.5
-%define rel	2
+%define version	0.1.6
+%define rel	1
 
 Summary:	VDR plugin: Download video files from the web
 Name:		%name
@@ -14,7 +14,6 @@ URL:		http://users.tkk.fi/~aajanki/vdr/webvideo/
 Source:		http://users.tkk.fi/~aajanki/vdr/webvideo/vdr-%plugin-%version.tgz
 Source1:	webvid.init
 Source2:	webvid.sysconfig
-Patch0:		webvideo-gcc4.4.patch
 BuildRoot:	%{_tmppath}/%{name}-buildroot
 BuildRequires:	vdr-devel >= 1.6.0-7
 BuildRequires:	libxml2-devel
@@ -71,7 +70,6 @@ the background.
 
 %prep
 %setup -q -n %plugin-%version
-%patch0 -p1
 cd vdr-plugin
 %vdr_plugin_prep
 %vdr_plugin_params_begin %plugin
