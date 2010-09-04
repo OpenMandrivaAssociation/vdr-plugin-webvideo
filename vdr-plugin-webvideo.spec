@@ -1,8 +1,12 @@
 
 %define plugin	webvideo
 %define name	vdr-plugin-%plugin
-%define version	0.1.6
+%define version	0.3.2
 %define rel	1
+
+%define major	0
+%define libname	%mklibname webvi %{major}
+%define devname %mklibname webvi -d
 
 Summary:	VDR plugin: Download video files from the web
 Name:		%name
@@ -12,14 +16,18 @@ Group:		Video
 License:	GPLv3+
 URL:		http://users.tkk.fi/~aajanki/vdr/webvideo/
 Source:		http://users.tkk.fi/~aajanki/vdr/webvideo/vdr-%plugin-%version.tgz
-Source1:	webvid.init
-Source2:	webvid.sysconfig
+Patch0:		webvideo-lib64.patch
+Patch1:		webvideo-ldflags.patch
+# remove stuff that is already handled by us from Makefile:
+Patch2:		webvideo-makefile-skip.patch
+Patch3:		webvideo-sysconfdir.patch
+Patch4:		webvideo-no-ldconfig.patch
+Patch5:		webvideo-default-template-path.patch
 BuildRoot:	%{_tmppath}/%{name}-buildroot
 BuildRequires:	vdr-devel >= 1.6.0-7
 BuildRequires:	libxml2-devel
 BuildRequires:	python-devel
 Requires:	vdr-abi = %vdr_abi
-Suggests:	webvid
 
 %description
 Webvideo plugin is a tool for browsing and downloading videos from
@@ -28,83 +36,100 @@ using VDR menu interface or a command line client. With the help of
 xineliboutput plugin the videos can be played directly without
 downloading them first. Mplayer plugin is also supported.
 
-The package consists of three components: VDR plugin, a daemon that
-transforms webpages into a format understood by the plugin, and a
-command line client webvi that can do everything the plugin does but
-works without VDR.
+This package is the VDR plugin. A standalone command line client is
+available in package webvi.
 
-%package -n webvid
-Summary:	Web video downloader daemon
-Group:		Video
+%package -n python-webvi
+Summary:	Python module for web video download and playback
+Group:		System/Libraries
 Requires:	python-curl
 Requires:	python-libxslt
 Requires:	python-libxml2
-Requires:	python-ctypes
-# used via ctypes:
-Requires:	%{_lib}mms0
+Requires:	python-mimms
+Suggests:	rtmpdump
+Suggests:	rtmpdump-yle
+Obsoletes:	webvid < 0.3.2
+%py_requires
 
-%description -n webvid
-webvid is a server that downloads web pages from certain media sharing
-websites, such as YouTube or Google Video, and transforms them into an
-XML-based menu format.
+%description -n python-webvi
+webvi is a tool for downloading and playing videos from popular video
+sharing webvites such as YouTube.
 
-The server listens for client (VDR plugin or webvi, the command line
-client) connections in port 2357. The client asks for a menu page or
-media file using a reference its has received from the server earlier.
-The server connects to upstream web site, downloads a web page, and
-transforms it into a simple XML format.The client then shows the menu
-to the user who may choose to follow another link.
+This package contains the python module.
+
+%package -n %libname
+Summary:	Shared library for using webvi
+Group:		System/Libraries
+Requires:	python-webvi >= %{version}
+
+%description -n %{libname}
+webvi is a tool for downloading and playing videos from popular video
+sharing webvites such as YouTube.
+
+This package contains the C library for using the webvi python
+module.
+
+%package -n %devname
+Summary:	Development files for webvi C bindings
+Group:		Development/C
+Requires:	%{libname} = %{version}-%{release}
+Provides:	webvi-devel = %{version}-%{release}
+
+%description -n %{devname}
+webvi is a tool for downloading and playing videos from popular video
+sharing webvites such as YouTube.
+
+This package contains the C bindings for the webvi python module.
 
 %package -n webvi
 Summary:	Command line web video downloader
 Group:		Video
-Suggests:	webvid
 Requires:	python-libxml2
+Requires:	python-webvi >= %{version}
+%py_requires
 
 %description -n webvi
 webvi is a command line tool for downloading video and audio files
 from certain media sharing websites, such as YouTube or Google Video.
 
-The program communicates with webvid daemon, which must be running in
-the background.
-
 %prep
 %setup -q -n %plugin-%version
-cd vdr-plugin
+%apply_patches
+cd src/vdr-plugin
 %vdr_plugin_prep
 %vdr_plugin_params_begin %plugin
 # save downloaded files to dir
 var=DOWNLOAD_DIR
-param="-d DOWNLOADDIR"
-# connect to server
-var=SERVER
-param="-s SERVER"
-# connect to port
-var=PORT
-param="-p PORT"
-# command for starting webvid
-# (note that normally you should start it with "service webvid start")
-var=DAEMONCMD
-param="-c DAEMONCMD"
+param="-d DOWNLOAD_DIR"
+# read video site templates from DIR instead of default
+var=TEMPLATE_DIR
+param="-t TEMPLATE_DIR"
+# read another config file instead of default
+var=CONFIG_FILE
+param="-c CONFIG_FILE"
+# execute a command after downloading a file
+var=POSTPROCESS_CMD
+param="-p POSTPROCESS_CMD"
 %vdr_plugin_params_end
 
 %build
-python setup.py build
-cd vdr-plugin
-export VDR_PLUGIN_EXTRA_FLAGS="$(pkg-config --cflags libxml-2.0)"
+%make CXXFLAGS="%{optflags}" CFLAGS="%{optflags}" LDFLAGS="%{ldflags}" PREFIX="%{_prefix}"
+cd src/vdr-plugin
 %vdr_plugin_build 
 
 %install
 rm -rf %{buildroot}
 python setup.py install --root=%{buildroot}
-%make install-data PLUGINCONFIGDIR=%{buildroot}%{_vdr_plugin_cfgdir}/%{plugin}
+%make install \
+	VDRPLUGINCONFDIR=%{buildroot}%{_vdr_plugin_cfgdir} \
+	PREFIX=%{buildroot}%{_prefix} \
+	SYSCONFDIR="%{buildroot}%{_sysconfdir}" \
+	LIBDIR="%{buildroot}%{_libdir}"
 
-install -d -m755 %{buildroot}%{_initrddir}
-install -m755 %{SOURCE1} %{buildroot}%{_initrddir}/webvid
-install -d -m755 %{buildroot}%{_sysconfdir}/sysconfig
-install -m644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/webvid
+install -d -m755 %{buildroot}%{_includedir}
+install -m644 src/libwebvi/libwebvi.h %{buildroot}%{_includedir}
 
-cd vdr-plugin
+cd src/vdr-plugin
 %vdr_plugin_install
 
 %clean
@@ -116,28 +141,33 @@ rm -rf %{buildroot}
 %postun
 %vdr_plugin_postun %plugin
 
-%post -n webvid
-%_post_service webvid
-
-%preun -n webvid
-%_preun_service webvid
-
-%files -f vdr-plugin/%plugin.vdr
+%files -f src/vdr-plugin/%plugin.vdr
 %defattr(-,root,root)
-%doc README HISTORY TODO
+%doc README README.vdrplugin HISTORY TODO
 %dir %{_vdr_plugin_cfgdir}/%plugin
 %config(noreplace) %{_vdr_plugin_cfgdir}/%plugin/mime.types
+%config(noreplace) %{_vdr_plugin_cfgdir}/%plugin/webvi.plugin.conf
 
-%files -n webvid
+%files -n python-webvi
 %defattr(-,root,root)
-%doc README.daemon
-%config(noreplace) %{_sysconfdir}/sysconfig/webvid
-%{_initrddir}/webvid
-%{_bindir}/webvid
-%{python_sitelib}/webvid*
-%{_datadir}/webvid
+%{python_sitelib}/webvi
+%{python_sitelib}/libwebvi-*.egg-info
+%{_datadir}/webvi
+
+%files -n %libname
+%defattr(-,root,root)
+%{_libdir}/libwebvi.so.%{major}*
+
+%files -n %devname
+%defattr(-,root,root)
+%doc README TODO HISTORY doc/developers.txt
+%{_includedir}/libwebvi.h
+%{_libdir}/libwebvi.so
 
 %files -n webvi
 %defattr(-,root,root)
-%doc README.webvi
+%doc README README.webvi TODO HISTORY
+%{_sysconfdir}/webvi.conf
 %{_bindir}/webvi
+%{python_sitelib}/webvicli
+
