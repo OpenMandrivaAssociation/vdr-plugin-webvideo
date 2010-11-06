@@ -2,7 +2,7 @@
 %define plugin	webvideo
 %define name	vdr-plugin-%plugin
 %define version	0.3.2
-%define rel	2
+%define rel	3
 
 %define major	0
 %define libname	%mklibname webvi %{major}
