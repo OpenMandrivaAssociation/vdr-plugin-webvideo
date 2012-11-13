@@ -1,0 +1,22 @@
+Index: webvideo-0.3.2/src/libwebvi/Makefile
+===================================================================
+--- webvideo-0.3.2/src/libwebvi/Makefile
++++ webvideo-0.3.2/src/libwebvi/Makefile	2010-09-04 16:50:20.019939036 +0300
+@@ -1,4 +1,5 @@
+ PREFIX ?= /usr/local
++LIBDIR ?= $(PREFIX)/lib
+ 
+ LIBNAME=libwebvi.so
+ LIBSONAME=$(LIBNAME).0
+@@ -27,8 +28,8 @@
+ 	rm -f webvi/*.pyc webvi/*~
+ 
+ install: $(LIBMINOR)
+-	mkdir -p $(PREFIX)/lib
+-	cp --remove-destination -d $(LIBNAME)* $(PREFIX)/lib
+-	/sbin/ldconfig $(PREFIX)/lib
++	mkdir -p $(LIBDIR)
++	cp --remove-destination -d $(LIBNAME)* $(LIBDIR)
++	/sbin/ldconfig $(LIBDIR)
+ 
+ .PHONY: clean install

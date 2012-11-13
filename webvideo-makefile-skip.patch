@@ -1,0 +1,32 @@
+Index: webvideo-0.3.2/Makefile
+===================================================================
+--- webvideo-0.3.2/Makefile
++++ webvideo-0.3.2/Makefile	2010-09-04 17:06:03.313286470 +0300
+@@ -19,7 +19,7 @@
+ LIBDIR = $(VDRPLUGINDIR)
+ 
+ # Default target compiles everything but does not install anything.
+-all-noinstall: libwebvi vdr-plugin
++all-noinstall: libwebvi
+ 
+ # This target is used by VDR's make plugins. It compiles everything
+ # and installs VDR plugin.
+@@ -44,9 +44,7 @@
+ 	mkdir -p $(VDRPLUGINDIR)
+ 	cp -f src/vdr-plugin/libvdr-webvideo.so.$(APIVERSION) $(VDRPLUGINDIR)/libvdr-webvideo.so.$(APIVERSION)
+ 
+-install-vdr-plugin: vdr-plugin $(VDRPLUGINDIR)/libvdr-webvideo.so.$(APIVERSION)
+-	mkdir -p $(VDRLOCALEDIR)
+-	cp -rf src/vdr-plugin/locale/* $(VDRLOCALEDIR)
++install-vdr-plugin:
+ 	mkdir -p $(VDRPLUGINCONFDIR)/webvideo
+ 	cp -f src/vdr-plugin/mime.types $(VDRPLUGINCONFDIR)/webvideo
+ 
+@@ -54,7 +52,6 @@
+ 	$(MAKE) -C src/libwebvi install
+ 
+ install-python:
+-	python setup.py install --prefix $(PREFIX)
+ 
+ install-conf: webvi.conf webvi.plugin.conf
+ 	cp -f webvi.conf /etc/

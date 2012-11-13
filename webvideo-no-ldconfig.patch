@@ -1,0 +1,10 @@
+diff -Nurpa -x '*~' -x '*.orig' -x '*.rej' -x '*.swp' webvideo-0.3.2//src/libwebvi/Makefile newdir/src/libwebvi/Makefile
+--- webvideo-0.3.2//src/libwebvi/Makefile	2010-09-04 17:12:56.624789701 +0300
++++ webvideo-0.3.2/src/libwebvi/Makefile	2010-09-04 17:13:06.823344959 +0300
+@@ -30,6 +30,5 @@ clean:
+ install: $(LIBMINOR)
+ 	mkdir -p $(LIBDIR)
+ 	cp --remove-destination -d $(LIBNAME)* $(LIBDIR)
+-	/sbin/ldconfig $(LIBDIR)
+ 
+ .PHONY: clean install

@@ -1,0 +1,13 @@
+Index: webvideo-0.3.2/src/libwebvi/webvi/request.py
+===================================================================
+--- webvideo-0.3.2/src/libwebvi/webvi/request.py
++++ webvideo-0.3.2/src/libwebvi/webvi/request.py	2010-09-04 17:19:29.451177020 +0300
+@@ -28,7 +28,7 @@
+ 
+ DEBUG = False
+ 
+-DEFAULT_TEMPLATE_PATH = '/usr/local/share/webvi/templates'
++DEFAULT_TEMPLATE_PATH = '/usr/share/webvi/templates'
+ template_path = DEFAULT_TEMPLATE_PATH
+ 
+ def debug(msg):

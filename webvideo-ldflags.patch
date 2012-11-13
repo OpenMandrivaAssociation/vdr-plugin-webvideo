@@ -1,0 +1,13 @@
+Index: webvideo-0.3.2/src/libwebvi/Makefile
+===================================================================
+--- webvideo-0.3.2/src/libwebvi/Makefile
++++ webvideo-0.3.2/src/libwebvi/Makefile	2010-09-04 16:52:37.846439539 +0300
+@@ -15,7 +15,7 @@
+ 	$(CC) -fPIC -Wall -O2 -g $(CFLAGS) $(DEFINES) `python-config --cflags` -c -o libwebvi.o libwebvi.c
+ 
+ $(LIBMINOR): libwebvi.o
+-	$(CC) -shared -Wl,-soname,$(LIBSONAME) -Wl,--as-needed libwebvi.o `python-config --ldflags` -o $(LIBMINOR)
++	$(CC) -shared -Wl,-soname,$(LIBSONAME) -Wl,--as-needed $(LDFLAGS) libwebvi.o `python-config --ldflags` -o $(LIBMINOR)
+ 	ln -sf $(LIBMINOR) $(LIBSONAME)
+ 	ln -sf $(LIBSONAME) $(LIBNAME)
+ 

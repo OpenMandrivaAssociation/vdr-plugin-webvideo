@@ -1,0 +1,21 @@
+diff -p -up webvideo-0.3.2/Makefile.orig webvideo-0.3.2/Makefile
+--- webvideo-0.3.2/Makefile.orig	2010-09-04 17:09:14.453693417 +0300
++++ webvideo-0.3.2/Makefile	2010-09-04 17:09:14.477694724 +0300
+@@ -1,5 +1,7 @@
+ # prefix for non-VDR stuff
+ PREFIX ?= /usr/local
++# configuration directory
++SYSCONFDIR ?= /etc
+ # VDR directory
+ VDRDIR ?= /usr/src/vdr-1.6.0
+ # VDR's library directory
+@@ -54,7 +56,8 @@ install-libwebvi: libwebvi
+ install-python:
+ 
+ install-conf: webvi.conf webvi.plugin.conf
+-	cp -f webvi.conf /etc/
++	mkdir -p $(SYSCONFDIR)
++	cp -f webvi.conf $(SYSCONFDIR)
+ 	mkdir -p $(VDRPLUGINCONFDIR)/webvideo
+ 	cp -f webvi.plugin.conf $(VDRPLUGINCONFDIR)/webvideo
+ 
