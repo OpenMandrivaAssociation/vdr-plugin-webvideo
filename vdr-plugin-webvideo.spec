@@ -2,7 +2,7 @@
 %define plugin	webvideo
 %define name	vdr-plugin-%plugin
 %define version	0.3.2
-%define rel	3
+%define rel	4
 
 %define major	0
 %define libname	%mklibname webvi %{major}
@@ -23,7 +23,6 @@ Patch2:		webvideo-makefile-skip.patch
 Patch3:		webvideo-sysconfdir.patch
 Patch4:		webvideo-no-ldconfig.patch
 Patch5:		webvideo-default-template-path.patch
-BuildRoot:	%{_tmppath}/%{name}-buildroot
 BuildRequires:	vdr-devel >= 1.6.0-7
 BuildRequires:	libxml2-devel
 BuildRequires:	python-devel
@@ -118,10 +117,9 @@ cd src/vdr-plugin
 %vdr_plugin_build 
 
 %install
-rm -rf %{buildroot}
 python setup.py install --root=%{buildroot}
 %make install \
-	VDRPLUGINCONFDIR=%{buildroot}%{_vdr_plugin_cfgdir} \
+	VDRPLUGINCONFDIR=%{buildroot}%{vdr_plugin_cfgdir} \
 	PREFIX=%{buildroot}%{_prefix} \
 	SYSCONFDIR="%{buildroot}%{_sysconfdir}" \
 	LIBDIR="%{buildroot}%{_libdir}"
@@ -132,9 +130,6 @@ install -m644 src/libwebvi/libwebvi.h %{buildroot}%{_includedir}
 cd src/vdr-plugin
 %vdr_plugin_install
 
-%clean
-rm -rf %{buildroot}
-
 %post
 %vdr_plugin_post %plugin
 
@@ -144,9 +139,9 @@ rm -rf %{buildroot}
 %files -f src/vdr-plugin/%plugin.vdr
 %defattr(-,root,root)
 %doc README README.vdrplugin HISTORY TODO
-%dir %{_vdr_plugin_cfgdir}/%plugin
-%config(noreplace) %{_vdr_plugin_cfgdir}/%plugin/mime.types
-%config(noreplace) %{_vdr_plugin_cfgdir}/%plugin/webvi.plugin.conf
+%dir %{vdr_plugin_cfgdir}/%plugin
+%config(noreplace) %{vdr_plugin_cfgdir}/%plugin/mime.types
+%config(noreplace) %{vdr_plugin_cfgdir}/%plugin/webvi.plugin.conf
 
 %files -n python-webvi
 %defattr(-,root,root)
@@ -170,4 +165,56 @@ rm -rf %{buildroot}
 %{_sysconfdir}/webvi.conf
 %{_bindir}/webvi
 %{python_sitelib}/webvicli
+
+
+
+%changelog
+* Sat Nov 06 2010 Funda Wang <fwang@mandriva.org> 0.3.2-3mdv2011.0
++ Revision: 594033
+- rebuld for py2.7
+
+* Tue Nov 02 2010 Michael Scherer <misc@mandriva.org> 0.3.2-2mdv2011.0
++ Revision: 592365
+- rebuild for python 2.7
+
+* Sat Sep 04 2010 Anssi Hannula <anssi@mandriva.org> 0.3.2-1mdv2011.0
++ Revision: 575894
+- new version
+- drop webvid subpackage, no daemon is needed anymore
+- add makefile patches:
+  o fix libdir on lib64 (lib64.patch)
+  o use ldflags (ldflags.patch)
+  o skip manually installed files (makefile-skip.patch)
+  o use proper sysconfdir (sysconfdir.patch)
+  o do not run ldconfig (no-ldconfig.patch)
+- fix default template path for our prefix (default-template-path.patch)
+- add python-webvi package for the new main python module that replaces
+  webvid
+- add libwebvi0 and libwebvi-devel for the C bindings
+- update vdr plugin sysconfig file to match current options
+- remove now unneeded extra plugin flags
+
+* Sun Sep 27 2009 Anssi Hannula <anssi@mandriva.org> 0.1.6-1mdv2011.0
++ Revision: 449955
+- new version
+- drop gcc4.4.patch, applied upstream
+
+* Tue Jul 28 2009 Anssi Hannula <anssi@mandriva.org> 0.1.5-2mdv2010.0
++ Revision: 401088
+- rebuild for new VDR
+- adapt for vdr compilation flags handling changes, bump buildrequires
+
+* Wed Jul 15 2009 Anssi Hannula <anssi@mandriva.org> 0.1.5-1mdv2010.0
++ Revision: 396169
+- new version
+- update sysconfig file
+- fix build with gcc4.4 (gcc4.4.patch)
+
+* Fri Mar 20 2009 Anssi Hannula <anssi@mandriva.org> 0.1.2-2mdv2009.1
++ Revision: 359385
+- rebuild for new vdr
+
+* Sat Mar 07 2009 Anssi Hannula <anssi@mandriva.org> 0.1.2-1mdv2009.1
++ Revision: 352557
+- initial Mandriva release
 
