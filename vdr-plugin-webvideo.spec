@@ -2,7 +2,7 @@
 %define plugin	webvideo
 %define name	vdr-plugin-%plugin
 %define version	0.3.2
-%define rel	4
+%define rel	5
 
 %define major	0
 %define libname	%mklibname webvi %{major}
@@ -129,12 +129,6 @@ install -m644 src/libwebvi/libwebvi.h %{buildroot}%{_includedir}
 
 cd src/vdr-plugin
 %vdr_plugin_install
-
-%post
-%vdr_plugin_post %plugin
-
-%postun
-%vdr_plugin_postun %plugin
 
 %files -f src/vdr-plugin/%plugin.vdr
 %defattr(-,root,root)
