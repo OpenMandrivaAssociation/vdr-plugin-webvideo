@@ -93,7 +93,7 @@ from certain media sharing websites, such as YouTube or Google Video.
 
 %prep
 %setup -q -n %plugin-%version
-%apply_patches
+%autopatch -p1
 cd src/vdr-plugin
 %vdr_plugin_prep
 %vdr_plugin_params_begin %plugin
