@@ -14,7 +14,7 @@ Version:	%version
 Release:	%mkrel %rel
 Group:		Video
 License:	GPLv3+
-URL:		http://users.tkk.fi/~aajanki/vdr/webvideo/
+URL:		https://users.tkk.fi/~aajanki/vdr/webvideo/
 Source:		http://users.tkk.fi/~aajanki/vdr/webvideo/vdr-%plugin-%version.tgz
 Patch0:		webvideo-lib64.patch
 Patch1:		webvideo-ldflags.patch
