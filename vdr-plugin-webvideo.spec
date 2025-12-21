@@ -23,6 +23,7 @@ Patch2:		webvideo-makefile-skip.patch
 Patch3:		webvideo-sysconfdir.patch
 Patch4:		webvideo-no-ldconfig.patch
 Patch5:		webvideo-default-template-path.patch
+BuildRequires:	make
 BuildRequires:	vdr-devel >= 1.6.0-7
 BuildRequires:	libxml2-devel
 BuildRequires:	python-devel
