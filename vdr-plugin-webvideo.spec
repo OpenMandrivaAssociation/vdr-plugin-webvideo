@@ -11,7 +11,7 @@
 Summary:	VDR plugin: Download video files from the web
 Name:		%name
 Version:	%version
-Release:	%mkrel %rel
+Release:	%rel.1
 Group:		Video
 License:	GPLv3+
 URL:		https://users.tkk.fi/~aajanki/vdr/webvideo/
